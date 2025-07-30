@@ -1,26 +1,25 @@
-// === Параметри вентилятора (тонкі лопаті для 5В мотора) ===
+// === Fan parameters (thin blades for 5V) ===
 blades = 5;                         
-hub_radius = 27;                    
-shaft_radius = 24;                  
-fan_radius = 52.5;                  
+hub_radius = 19;                    
+shaft_radius = 16.6;                  
+fan_radius = 35;                  
 blade_length = fan_radius - hub_radius;
 
-height = 14;                        // Зменшена товщина лопаті
-twist = 40
-;                       // Менший кут крутки для тонших лопатей
+height = 10;                        // Reduced blade thickness
+twist = 35;                         // Smaller twist angle for thinner blades
 
-// === Параметри лопаті (тонші) ===
+// === Blade parameters (thinner) ===
 blade_overlap = 2;                 
-blade_base_width = 8;             // Вдвічі менше, ніж раніше
-blade_mid_width = 5;
-blade_tip_width = 2;
+blade_base_width = 6;              // Half the previous value
+blade_mid_width = 3;
+blade_tip_width = 1.6;
 
-// === Перевірка втулки ===
+// === Hub thickness check ===
 wall_thickness = hub_radius - shaft_radius;
 if (wall_thickness < 2)
-    echo("⚠️ Увага: тонка втулка (", wall_thickness, " мм)");
+    echo("⚠️ Warning: Thin hub (", wall_thickness, " mm)");
 
-// === Модуль лопаті ===
+// === Blade module ===
 module blade() {
     linear_extrude(height = height, twist = twist)
         polygon(points=[
@@ -33,7 +32,7 @@ module blade() {
         ]);
 }
 
-// === Повна модель вентилятора ===
+// === Complete fan model ===
 module fan_with_hub() {
     difference() {
         union() {
