@@ -1,0 +1,55 @@
+// 📐 Параметри
+sphere_radius = 10;
+bolt_diameter = 6;
+hex_width = 10;
+hex_depth = 3;
+clearance = 0.3;
+
+outer_diameter = 10;        
+inner_diameter = 8;         
+cylinder_height = 40;
+solid_cap_height = 5;       
+cylinder_z_offset = -50
+;     // 🔄 зміщення циліндра по осі Z
+
+// ⚙️ Модуль шестигранного заглиблення
+module hex_hole(width, depth) {
+    rotate([0,0,30])
+        linear_extrude(height = depth + 1)
+            polygon(points=[
+                for(i=[0:5])
+                    [width/2 * cos(60*i), width/2 * sin(60*i)]
+            ]);
+}
+
+// 🧱 Основна деталь
+difference() {
+    union() {
+        // 🔘 Півсфера
+        rotate([90, 0, 0])
+            intersection() {
+                sphere(r = sphere_radius, $fn = 64);
+                translate([-sphere_radius, -sphere_radius, 0])
+                    cube([2*sphere_radius, 2*sphere_radius, sphere_radius], center=false);
+            }
+
+        // 🔩 Трубчастий циліндр з суцільним верхом
+        translate([0, 0, cylinder_z_offset])
+            difference() {
+                cylinder(h = cylinder_height, d = outer_diameter, $fn = 64);
+
+                translate([0, 0, 0])
+                    cylinder(h = cylinder_height - solid_cap_height, d = inner_diameter, $fn = 64);
+            }
+    }
+
+    // 🕳 Отвір під болт
+    rotate([90, 0, 0])
+        translate([0, 0, -1])
+            cylinder(h = 2*sphere_radius, d = bolt_diameter + clearance, $fn = 64);
+
+    // 🔷 Шестигранне заглиблення
+    rotate([90, 0, 0])
+        translate([0, 0, sphere_radius - hex_depth])
+            hex_hole(hex_width + clearance, hex_depth);
+}
